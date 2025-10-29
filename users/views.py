@@ -13,6 +13,9 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
 
 # Create your views here.
+
+
+# loginform
 def login_view(request):
     if request.method == 'POST':  # Изменено на POST
         form = AuthenticationForm(data=request.POST)  # Используйте data=request.POST
@@ -31,6 +34,8 @@ def login_view(request):
         form = AuthenticationForm()
     context = {'form': form}
     return render(request, 'users/login.html',context)
+
+# regform
 def registerview(request):
     if request.method == 'POST':
         form = CustomUserCreationForm(request.POST)
@@ -43,7 +48,9 @@ def registerview(request):
     else:
         form = UserCreationForm()
     return render(request, 'users/register.html', {'form': form})
+
+# logutform
 def custom_logout(request):
     logout(request)  # стандартный выход
     # Ваша дополнительная логика (очистка cookies и т.п.)
-    return redirect('common')
+    return redirect('users:login')
