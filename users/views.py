@@ -5,6 +5,5 @@ from users.form import UserLoginForm
 def login(request):
     context = {'form': UserLoginForm()}
     return render(request, 'users/login.html',context)
-def register(request):
-    return render(request, 'users/register.html')
+
 
