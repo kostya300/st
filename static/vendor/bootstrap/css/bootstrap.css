@@ -4726,7 +4726,7 @@ input[type="button"].btn-block {
   background-color: #fff;
   background-clip: border-box;
   border: 1px solid rgba(0, 0, 0, 0.125);
-  border-radius: 20px;
+  border-radius: 0.25rem;
 }
 
 .card > hr {
@@ -4765,7 +4765,6 @@ input[type="button"].btn-block {
 
 .card-title {
   margin-bottom: 0.75rem;
-
 }
 
 .card-subtitle {
@@ -5015,7 +5014,7 @@ input[type="button"].btn-block {
   padding: 0.5rem 0.75rem;
   margin-left: -1px;
   line-height: 1.25;
-  color: #8ab6e6;
+  color: #007bff;
   background-color: #fff;
   border: 1px solid #dee2e6;
 }
@@ -8098,7 +8097,6 @@ button.bg-dark:focus {
 
 .h-100 {
   height: 100% !important;
-
 }
 
 .h-auto {

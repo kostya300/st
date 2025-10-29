@@ -1,9 +1,9 @@
 body {
-    background: url("../img/wallpaper.jpg") no-repeat center top fixed;
-    -webkit-background-size: cover;
-    -moz-background-size: cover;
-    background-size: cover;
-    -o-background-size: cover;
+    /*background: url("../img/wallpaper.jpg") no-repeat center top fixed;*/
+    /*-webkit-background-size: cover;*/
+    /*-moz-background-size: cover;*/
+    /*background-size: cover;*/
+    /*-o-background-size: cover;*/
     padding-top: 56px;
 }
 
@@ -13,5 +13,10 @@ body {
     color: white;
 }
 
-#start-purchase-link {
+.commonlink_start_purches {
+    text-decoration: none;
+    color: white;
+}
+.commonlink_start_purches:hover{
+    background-color: #0c5460;
 }
