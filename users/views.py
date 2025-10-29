@@ -7,9 +7,10 @@ from .forms import UserLoginForm
 from django.contrib.auth.models import User
 from django.db import IntegrityError
 from django.contrib.auth import authenticate, login as auth_login
+from .forms import CustomUserCreationForm
 from django.utils import timezone
 from django.contrib.auth.decorators import login_required
-
+from django.contrib.auth import logout
 
 # Create your views here.
 def login_view(request):
@@ -31,5 +32,18 @@ def login_view(request):
     context = {'form': form}
     return render(request, 'users/login.html',context)
 def registerview(request):
-    return render(request, 'users/register.html')
-
+    if request.method == 'POST':
+        form = CustomUserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            auth_login(request, user)
+            return redirect('users:login')
+        else:
+            return render(request, 'users/register.html', {'form': form, 'error': 'Исправьте ошибки в форме'})
+    else:
+        form = UserCreationForm()
+    return render(request, 'users/register.html', {'form': form})
+def custom_logout(request):
+    logout(request)  # стандартный выход
+    # Ваша дополнительная логика (очистка cookies и т.п.)
+    return redirect('common')
