@@ -3,14 +3,15 @@ from .models import User
 from django.db import IntegrityError
 from django.shortcuts import render, redirect, get_object_or_404,reverse
 from django.contrib.auth.forms import UserCreationForm,AuthenticationForm
-from .forms import UserLoginForm
+from .forms import UserLoginForm, UserProfileForm
 from django.contrib.auth.models import User
 from django.db import IntegrityError
 from django.contrib.auth import authenticate, login as auth_login
 from .forms import CustomUserCreationForm
-from django.utils import timezone
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
+import logging
 
 # Create your views here.
 
@@ -50,7 +51,32 @@ def registerview(request):
     return render(request, 'users/register.html', {'form': form})
 
 # logutform
+
 def custom_logout(request):
     logout(request)  # стандартный выход
     # Ваша дополнительная логика (очистка cookies и т.п.)
     return redirect('users:login')
+
+
+logger = logging.getLogger(__name__)
+
+
+def profileview(request):
+    if request.method == 'POST':
+        form = UserProfileForm(instance=request.user)
+        if form.is_valid():
+            try:
+                form.save()
+                messages.success(request, 'Профиль успешно обновлён!')
+                return redirect('users:profile')
+            except Exception as e:
+                messages.error(request, f'Ошибка при сохранении: {e}')
+                logger.error(f'Ошибка сохранения профиля: {e}')
+        else:
+            messages.error(request, 'Проверьте данные формы.')
+            logger.error(form.errors)
+    else:
+        form = UserProfileForm(instance=request.user)
+
+    context = {'form': form}
+    return render(request, 'users/profile.html', context)
