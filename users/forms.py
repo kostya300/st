@@ -29,7 +29,7 @@ class UserProfileForm(UserChangeForm):
     image = forms.ImageField(widget=forms.FileInput(attrs={'class': 'custom-file-input'}))
     username = forms.CharField(widget=forms.TextInput(attrs={'class': 'custom-file-input','readonly':True}))
     email = forms.EmailField(widget=forms.EmailInput(attrs={'class': 'form-control py-4','readonly':True}))
-
+    # Метка
     class Meta:
         model = User
         fields = ('first_name', 'last_name', 'image', 'username', 'email')
