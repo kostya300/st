@@ -4,6 +4,12 @@ from django.db import IntegrityError
 from django.shortcuts import render, redirect, get_object_or_404,reverse
 from django.contrib.auth.forms import UserCreationForm,AuthenticationForm
 from .forms import UserLoginForm, UserProfileForm
+from django.shortcuts import render
+from .models import User
+from django.db import IntegrityError
+from django.shortcuts import render, redirect, get_object_or_404,reverse
+from django.contrib.auth.forms import UserCreationForm,AuthenticationForm
+from .forms import UserLoginForm, UserProfileForm
 from django.contrib.auth.models import User
 from django.db import IntegrityError
 from django.contrib.auth import authenticate, login as auth_login
