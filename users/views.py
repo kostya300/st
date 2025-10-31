@@ -1,21 +1,17 @@
-from django.shortcuts import render
-from .models import User
-from django.db import IntegrityError
+
 from django.shortcuts import render, redirect, get_object_or_404,reverse
 from django.contrib.auth.forms import UserCreationForm,AuthenticationForm
 from .forms import UserLoginForm, UserProfileForm
 from django.shortcuts import render
-from .models import User
-from django.db import IntegrityError
+from django.contrib.auth.decorators import login_required
+from django.db import DatabaseError
 from django.shortcuts import render, redirect, get_object_or_404,reverse
 from django.contrib.auth.forms import UserCreationForm,AuthenticationForm
 from .forms import UserLoginForm, UserProfileForm
-from django.contrib.auth.models import User
-from django.db import IntegrityError
 from django.contrib.auth import authenticate, login as auth_login
 from .forms import CustomUserCreationForm
 from django.contrib import messages
-from django.contrib.auth.decorators import login_required
+from django.core.exceptions import ValidationError
 from django.contrib.auth import logout
 import logging
 
@@ -24,21 +20,17 @@ import logging
 
 # loginform
 def login_view(request):
-    if request.method == 'POST':  # Изменено на POST
-        form = AuthenticationForm(data=request.POST)  # Используйте data=request.POST
+    if request.method == "POST":
+        form = UserLoginForm(request=request, data=request.POST)
         if form.is_valid():
-            username = form.cleaned_data.get('username')
-            password = form.cleaned_data.get('password')
+            username = request.POST.get('username')
+            password = request.POST.get('password')
             user = authenticate(request, username=username, password=password)
             if user is not None:
-                auth_login(request, user)  # Обратите внимание, что нужно передавать request
-                return redirect('common')  # Перенаправление на общую страницу
-            else:
-                return render(request, 'users/login.html', {'form': form, 'error': 'Неверные имя или пароль'})
-        else:
-            return render(request, 'users/login.html', {'form': form, 'error': 'Ошибка в форме'})
+                auth_login(request, user)
+                return redirect('common')
     else:
-        form = AuthenticationForm()
+        form = UserLoginForm(request=request)
     context = {'form': form}
     return render(request, 'users/login.html',context)
 
@@ -69,18 +61,27 @@ logger = logging.getLogger(__name__)
 
 def profileview(request):
     if request.method == 'POST':
-        form = UserProfileForm(instance=request.user)
+        form = UserProfileForm(
+            request.POST,
+            instance=request.user
+        )
         if form.is_valid():
             try:
                 form.save()
                 messages.success(request, 'Профиль успешно обновлён!')
                 return redirect('users:profile')
+            except ValidationError as e:
+                messages.error(request, f'Ошибка валидации данных: {e}')
+                logger.error(f'Validation error in profile save: {e}')
+            except DatabaseError as e:
+                messages.error(request, 'Ошибка сохранения в базу данных')
+                logger.error(f'Database error in profile save: {e}')
             except Exception as e:
-                messages.error(request, f'Ошибка при сохранении: {e}')
-                logger.error(f'Ошибка сохранения профиля: {e}')
+                messages.error(request, f'Неожиданная ошибка: {e}')
+                logger.exception('Unexpected error in profile save')
         else:
             messages.error(request, 'Проверьте данные формы.')
-            logger.error(form.errors)
+            logger.error(f'Form errors: {form.errors}')
     else:
         form = UserProfileForm(instance=request.user)
 

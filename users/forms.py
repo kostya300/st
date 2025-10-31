@@ -1,3 +1,5 @@
+from cProfile import label
+
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm,UserChangeForm
 from django import forms
 from .models import User
@@ -26,10 +28,9 @@ class CustomUserCreationForm(UserCreationForm):
 class UserProfileForm(UserChangeForm):
     first_name = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control py-4'}))
     last_name = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control py-4'}))
-    image = forms.ImageField(widget=forms.FileInput(attrs={'class': 'custom-file-input'}))
-    username = forms.CharField(widget=forms.TextInput(attrs={'class': 'custom-file-input','readonly':True}))
-    email = forms.EmailField(widget=forms.EmailInput(attrs={'class': 'form-control py-4','readonly':True}))
+    image = forms.ImageField(widget=forms.FileInput(attrs={'class': "custom-file-input"}),required=False)
 
     class Meta:
         model = User
         fields = ('first_name', 'last_name', 'image', 'username', 'email')
+# max_length=50,
