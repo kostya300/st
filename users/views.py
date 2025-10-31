@@ -48,7 +48,7 @@ def registerview(request):
         form = UserCreationForm()
     return render(request, 'users/register.html', {'form': form})
 
-# logutformYYYY
+# logutform31.10 21:00
 
 def custom_logout(request):
     logout(request)  # стандартный выход
@@ -63,6 +63,7 @@ def profileview(request):
     if request.method == 'POST':
         form = UserProfileForm(
             request.POST,
+            files=request.FILES,
             instance=request.user
         )
         if form.is_valid():

@@ -31,7 +31,7 @@ class UserProfileForm(UserChangeForm):
     image = forms.ImageField(widget=forms.FileInput(attrs={'class': "custom-file-input"}),required=False)
     username = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control py-4','readonly':True}))
     email = forms.EmailField(widget=forms.EmailInput(attrs={'class': 'form-control py-4','readonly':True}))
-    # this is a new branch and i need to  merge this branch with MAINST
+    # this is a new branch and i need to  merge this branch with MAINST and this part two 21:00 31.10
     class Meta:
         model = User
         fields = ('first_name', 'last_name', 'image', 'username', 'email')
