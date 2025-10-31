@@ -26,9 +26,11 @@ class CustomUserCreationForm(UserCreationForm):
         fields = ('first_name', 'last_name', 'email', 'username', 'password1', 'password2')
 # А в разметке для инпутов добавляем атрибут name, в котором значениями будут username и password. И обязательно инпут и лэбел должны быть связаны через id, т.е у label должен быть атрибут for  в котором должно быть указано то же самое, что и в id input.
 class UserProfileForm(UserChangeForm):
-    first_name = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control py-4'}))
-    last_name = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control py-4'}))
+    first_name = forms.CharField(required=True,widget=forms.TextInput(attrs={'class': 'form-control py-4'}))
+    last_name = forms.CharField(required=True,widget=forms.TextInput(attrs={'class': 'form-control py-4'}))
     image = forms.ImageField(widget=forms.FileInput(attrs={'class': "custom-file-input"}),required=False)
+    username = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control py-4','readonly':True}))
+    email = forms.EmailField(widget=forms.EmailInput(attrs={'class': 'form-control py-4','readonly':True}))
 
     class Meta:
         model = User

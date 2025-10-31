@@ -66,24 +66,16 @@ def profileview(request):
             instance=request.user
         )
         if form.is_valid():
+            print("Форма валидна")  # Отладка
             try:
                 form.save()
-                messages.success(request, 'Профиль успешно обновлён!')
+                print("Данные сохранены")  # Отладка
                 return redirect('users:profile')
-            except ValidationError as e:
-                messages.error(request, f'Ошибка валидации данных: {e}')
-                logger.error(f'Validation error in profile save: {e}')
-            except DatabaseError as e:
-                messages.error(request, 'Ошибка сохранения в базу данных')
-                logger.error(f'Database error in profile save: {e}')
             except Exception as e:
-                messages.error(request, f'Неожиданная ошибка: {e}')
-                logger.exception('Unexpected error in profile save')
+                print(f"Ошибка сохранения: {e}")  # Отладка
         else:
-            messages.error(request, 'Проверьте данные формы.')
-            logger.error(f'Form errors: {form.errors}')
+            print(f"Ошибки формы: {form.errors}")  # Отладка
     else:
         form = UserProfileForm(instance=request.user)
-
     context = {'form': form}
     return render(request, 'users/profile.html', context)
