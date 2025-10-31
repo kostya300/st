@@ -56,7 +56,7 @@ def registerview(request):
         form = UserCreationForm()
     return render(request, 'users/register.html', {'form': form})
 
-# logutform12345678
+# logutformYYYY
 
 def custom_logout(request):
     logout(request)  # стандартный выход
