@@ -56,7 +56,11 @@ def registerview(request):
         form = UserCreationForm()
     return render(request, 'users/register.html', {'form': form})
 
+<<<<<<< HEAD
 # logutform_newlog
+=======
+# logutformYYYY
+>>>>>>> new_branch
 
 def custom_logout(request):
     logout(request)  # стандартный выход
