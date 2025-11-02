@@ -1,4 +1,6 @@
+from http.client import HTTPResponse
 
+from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect, get_object_or_404,reverse
 from django.contrib.auth.forms import UserCreationForm,AuthenticationForm
 from .forms import UserLoginForm, UserProfileForm
@@ -81,5 +83,7 @@ def profileview(request):
     else:
         form = UserProfileForm(instance=request.user)
     context = {'form': form,
-               'baskets': Basket.objects.all(),}
+               'baskets': Basket.objects.filter(user=request.user),}
     return render(request, 'users/profile.html', context)
+
+
