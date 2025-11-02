@@ -15,4 +15,11 @@ class Product(models.Model):
     def __str__(self):
         return self.name
 
+
+#     new class basket
+class Basket(models.Model):
+    name = models.CharField(max_length=256)
+    products = models.ForeignKey(to=Product, on_delete=models.CASCADE)
+    quantity = models.PositiveIntegerField(default=0)
+    created_timestamp = models.DateTimeField(auto_now_add=True)
 # pip install django-dump-load-utf8 for fixtures
