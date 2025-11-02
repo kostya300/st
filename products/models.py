@@ -23,6 +23,10 @@ class Basket(models.Model):
     products_id = models.ForeignKey(Product, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField(default=1)
     def __str__(self):
-        return self.name
+        return f'корзина для {self.user.email} | Продукт {self.product.name}'
 
+    # cout price
+
+    def total_price(self):
+        return self.product.price * self.quantity
 # pip install django-dump-load-utf8 for fixtures
