@@ -14,6 +14,7 @@ from django.contrib import messages
 from django.core.exceptions import ValidationError
 from django.contrib.auth import logout
 import logging
+from products.models import Basket
 
 # Create your views here.
 
@@ -79,5 +80,6 @@ def profileview(request):
             print(f"Ошибки формы: {form.errors}")  # Отладка
     else:
         form = UserProfileForm(instance=request.user)
-    context = {'form': form}
+    context = {'form': form,
+               'baskets': Basket.objects.all(),}
     return render(request, 'users/profile.html', context)
