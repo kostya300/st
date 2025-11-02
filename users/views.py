@@ -17,6 +17,7 @@ from django.core.exceptions import ValidationError
 from django.contrib.auth import logout
 import logging
 from products.models import Basket
+from django.contrib.auth.decorators import login_required
 
 # Create your views here.
 
@@ -62,7 +63,7 @@ def custom_logout(request):
 
 logger = logging.getLogger(__name__)
 
-
+@login_required
 def profileview(request):
     if request.method == 'POST':
         form = UserProfileForm(

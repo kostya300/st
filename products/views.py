@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponseRedirect
 from .models import Product, ProductCategory, Basket
-from users.models import User
+from django.contrib.auth.decorators import login_required
 # Create your views here.
 def common(request):
     return render(request, "products/common.html")
@@ -15,7 +15,7 @@ def products(request):
 
 from django.shortcuts import redirect
 
-
+@login_required
 def basket_add_product(request, product_id):
     if not request.user.is_authenticated:
         return redirect('users:login')
@@ -38,6 +38,7 @@ def basket_add_product(request, product_id):
     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
 # basket_remove rm from basket controller for rm goods
+@login_required
 def basket_remove(request, basket_id):
     basket = Basket.objects.get(id=basket_id)
     basket.delete()
