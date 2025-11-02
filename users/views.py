@@ -1,4 +1,6 @@
+from http.client import HTTPResponse
 
+from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect, get_object_or_404,reverse
 from django.contrib.auth.forms import UserCreationForm,AuthenticationForm
 from .forms import UserLoginForm, UserProfileForm
@@ -14,6 +16,7 @@ from django.contrib import messages
 from django.core.exceptions import ValidationError
 from django.contrib.auth import logout
 import logging
+from products.models import Basket
 
 # Create your views here.
 
@@ -39,6 +42,7 @@ def registerview(request):
     if request.method == 'POST':
         form = CustomUserCreationForm(request.POST)
         if form.is_valid():
+            messages.success(request, 'Аккаунт успешно зарегестрирован')
             user = form.save()
             auth_login(request, user)
             return redirect('users:login')
@@ -48,6 +52,11 @@ def registerview(request):
         form = UserCreationForm()
     return render(request, 'users/register.html', {'form': form})
 
+<<<<<<< HEAD
+=======
+# logutform31.10 21:00
+
+>>>>>>> new_branch
 def custom_logout(request):
     logout(request)  # стандартный выход
     # Ваша дополнительная логика (очистка cookies и т.п.)
@@ -61,6 +70,7 @@ def profileview(request):
     if request.method == 'POST':
         form = UserProfileForm(
             request.POST,
+            files=request.FILES,
             instance=request.user
         )
         if form.is_valid():
@@ -75,5 +85,8 @@ def profileview(request):
             print(f"Ошибки формы: {form.errors}")  # Отладка
     else:
         form = UserProfileForm(instance=request.user)
-    context = {'form': form}
+    context = {'form': form,
+               'baskets': Basket.objects.filter(user=request.user),}
     return render(request, 'users/profile.html', context)
+
+

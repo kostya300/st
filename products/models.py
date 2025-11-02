@@ -1,4 +1,5 @@
 from django.db import models
+from users.models import User
 class ProductCategory(models.Model):
     name = models.CharField(max_length=200)
     description = models.TextField(null=True, blank=True)
@@ -15,4 +16,17 @@ class Product(models.Model):
     def __str__(self):
         return self.name
 
+
+#   new class basket
+class Basket(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    products_id = models.ForeignKey(Product, on_delete=models.CASCADE)
+    quantity = models.PositiveIntegerField(default=1)
+    def __str__(self):
+        return f'корзина для {self.user.email} | Продукт {self.product.name}'
+
+    # cout price
+
+    def total_price(self):
+        return self.product.price * self.quantity
 # pip install django-dump-load-utf8 for fixtures
