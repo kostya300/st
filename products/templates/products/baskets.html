@@ -14,19 +14,7 @@
                         <div class="row text-center">
                             <div class="col-lg-4">
 
-<input
-    name="quantity"
-    type="number"
-    class="form-control"
-    value="{{ basket.quantity }}"
-    min="0"
-    max="999"
-    step="1"
-    title="Укажите количество товара"
-    data-basket-id="{{ basket.id }}"
-    oninput="updateBasketQuantity(this)"
-
->
+								<p>{{ basket.quantity }} - шт.</p>
 	                            <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
                             </div>
                             <div class="col-lg-4">{{ basket.sum }} руб.</div>
