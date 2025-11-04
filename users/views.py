@@ -1,19 +1,15 @@
-from http.client import HTTPResponse
+from django.http import JsonResponse
 
-from django.http import HttpResponseRedirect
-from django.shortcuts import render, redirect, get_object_or_404,reverse
-from django.contrib.auth.forms import UserCreationForm,AuthenticationForm
-from .forms import UserLoginForm, UserProfileForm
-from django.shortcuts import render
-from django.contrib.auth.decorators import login_required
-from django.db import DatabaseError
+from django.views.decorators.http import require_http_methods
+from django.views.decorators.csrf import csrf_exempt
+import json
 from django.shortcuts import render, redirect, get_object_or_404,reverse
 from django.contrib.auth.forms import UserCreationForm,AuthenticationForm
 from .forms import UserLoginForm, UserProfileForm
 from django.contrib.auth import authenticate, login as auth_login
 from .forms import CustomUserCreationForm
 from django.contrib import messages
-from django.core.exceptions import ValidationError
+from django.db.models import Sum
 from django.contrib.auth import logout
 import logging
 from products.models import Basket
@@ -72,19 +68,38 @@ def profileview(request):
             instance=request.user
         )
         if form.is_valid():
-            print("Форма валидна")  # Отладка
+            print("Форма валидна")
             try:
                 form.save()
-                print("Данные сохранены")  # Отладка
+                print("Данные сохранены")
                 return redirect('users:profile')
             except Exception as e:
-                print(f"Ошибка сохранения: {e}")  # Отладка
+                print(f"Ошибка сохранения: {e}")
         else:
-            print(f"Ошибки формы: {form.errors}")  # Отладка
+            print(f"Ошибки формы: {form.errors}")
     else:
         form = UserProfileForm(instance=request.user)
+    #  cycle   подсчёт
+    total_sum = 0
+    total_quantity = 0
+    for basket in Basket.objects.filter(user=request.user):
+        total_sum += basket.sum()
+        total_quantity += basket.quantity
     context = {'form': form,
-               'baskets': Basket.objects.filter(user=request.user),}
+               'baskets': Basket.objects.filter(user=request.user),
+               'total_sum': total_sum,'total_quantity': total_quantity,
+               }
+
     return render(request, 'users/profile.html', context)
+
+
+
+
+
+
+
+
+
+
 
 
