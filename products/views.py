@@ -12,11 +12,13 @@ from django.db.models import Sum
 # Create your views here.
 def common(request):
     return render(request, "products/common.html")
-def products(request):
-    context = {
-        'categories': ProductCategory.objects.all(),
-        'products':Product.objects.all(),
-    }
+def products(request,category_id=None):
+    if category_id:
+        category = ProductCategory.objects.get(id=category_id)
+        products = Product.objects.filter(category=category)
+    else:
+        products = Product.objects.all()
+    context = {'categories':ProductCategory.objects.all(),'products':products,}
     return render(request, "products/products.html",context)
 
 
