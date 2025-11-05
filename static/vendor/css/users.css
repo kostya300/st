@@ -125,13 +125,12 @@ height: 400px;
     margin:3px;
     border: none;
     color: white;
-
-}
-.pag_link:hover{
+    &:active{
     color: black;
 }
-.pag_link:active{
+    &:hover{
     color: black;
+}
 }
 .pag_link_for_before{
     width: 80px;
@@ -143,4 +142,7 @@ height: 400px;
     margin:3px;
     border: none;
     color: white;
+    &:hover{
+        color: black;
+    }
 }
