@@ -15,7 +15,7 @@ def products(request,category_id=None):
         products_list = Product.objects.filter(category_id=category_id)
     else:
         products_list = Product.objects.all()
-    paginator = Paginator(products_list, 2)  # 12 товаров на страницу
+    paginator = Paginator(products_list, 2)  # 2 товара на страницу
     page_number = request.GET.get('page')  # Получаем номер страницы из запроса
     page_obj = paginator.get_page(page_number)  # Получаем объект страницы
     context = {'paginator': paginator,  # Передаём пагинатор для доступа к метаданным

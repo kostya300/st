@@ -1,12 +1,13 @@
 {% extends 'products/base.html' %}
 {% load static %}
 {% block css %}
+	<link rel="stylesheet" href="{% static 'vendor/css/users.css' %}">
 	<link href="{% static 'vendor/css/profile.css' %}" rel="stylesheet">
 {% endblock %}
 {% block content %}
-	<div class="container">
+	<div class="container profilehtmlblock">
     <div class="row">
-        <div class="col-lg-7">
+        <div class="col-lg-7 ">
             <h4 class="mt-3 mb-3">Профиль</h4>
             <div class="col-lg-12 text-center">
                 <img width="300" height="300"
