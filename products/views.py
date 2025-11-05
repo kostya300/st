@@ -2,15 +2,11 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponseRedirect
 from django.views.generic import TemplateView
 from django.views.generic.list import ListView
-from unicodedata import category
-
 from .models import Product, ProductCategory, Basket
 from django.contrib.auth.decorators import login_required
-from django.http import JsonResponse
 from django.views.decorators.http import require_http_methods
 from django.views.decorators.csrf import csrf_exempt
-import json
-from django.core.paginator import Paginator
+
 # Create your views here.
 
 class commonView(TemplateView):
@@ -34,19 +30,6 @@ class ProductListView(ListView):
         context['title'] = 'Neighbourhood'
         context['categories'] = ProductCategory.objects.all()
         return context
-
-# def products(request,category_id=None):
-#     if category_id:
-#         products_list = Product.objects.filter(category_id=category_id)
-#     else:
-#         products_list = Product.objects.all()
-#     paginator = Paginator(products_list, 2)  # 2 товара на страницу
-#     page_number = request.GET.get('page')  # Получаем номер страницы из запроса
-#     page_obj = paginator.get_page(page_number)  # Получаем объект страницы
-#     context = {'paginator': paginator,  # Передаём пагинатор для доступа к метаданным
-#         'page_number': page_number,'categories':ProductCategory.objects.all(),'products':page_obj,}
-#     return render(request, "products/products.html",context)
-
 
 from django.shortcuts import redirect
 

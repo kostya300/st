@@ -115,3 +115,32 @@ height: 400px;
 .carusel-prod-edir{
     border:3px solid #1c5028;
 }
+.pag_link{
+    width: 40px;
+    height: 40px;
+    text-align: center;
+    vertical-align: center;
+    border-radius: 50%;
+    background-color: #7f4dcf !important;
+    margin:3px;
+    border: none;
+    color: white;
+
+}
+.pag_link:hover{
+    color: black;
+}
+.pag_link:active{
+    color: black;
+}
+.pag_link_for_before{
+    width: 80px;
+    height: 40px;
+    text-align: center;
+    vertical-align: center;
+
+    background-color: #7f4dcf !important;
+    margin:3px;
+    border: none;
+    color: white;
+}
