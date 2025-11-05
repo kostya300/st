@@ -1,21 +1,25 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponseRedirect
 from .models import Product, ProductCategory, Basket
-from users.models import User
+from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
+from django.views.decorators.http import require_http_methods
+from django.views.decorators.csrf import csrf_exempt
+import json
+from django.http import JsonResponse
+
+from django.db.models import Sum
 # Create your views here.
 def common(request):
     return render(request, "products/common.html")
-def products(request):
-    context = {
-        'categories': ProductCategory.objects.all(),
-        'products':Product.objects.all(),
-    }
+def products(request,category_id=None):
+    context = {'categories':ProductCategory.objects.all(),'products':Product.objects.filter(category_id=category_id) if category_id else Product.objects.all(),}
     return render(request, "products/products.html",context)
 
 
 from django.shortcuts import redirect
 
-
+@login_required
 def basket_add_product(request, product_id):
     if not request.user.is_authenticated:
         return redirect('users:login')
@@ -36,9 +40,14 @@ def basket_add_product(request, product_id):
         )
 
     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
-
 # basket_remove rm from basket controller for rm goods
+@login_required
 def basket_remove(request, basket_id):
     basket = Basket.objects.get(id=basket_id)
     basket.delete()
     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+
+
+
+
+

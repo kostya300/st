@@ -3110,7 +3110,7 @@ fieldset:disabled a.btn {
 }
 
 .btn-link:disabled, .btn-link.disabled {
-  color: #6c757d;
+  color: #406990;
   pointer-events: none;
 }
 
