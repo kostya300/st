@@ -1,12 +1,16 @@
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render, redirect
 from django.http import HttpResponseRedirect
 from django.views.generic import TemplateView
 from django.views.generic.list import ListView
+from django.views.generic.edit import UpdateView, DeleteView
+from unicodedata import category
+
 from .models import Product, ProductCategory, Basket
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_http_methods
 from django.views.decorators.csrf import csrf_exempt
-
+from django.shortcuts import redirect
 # Create your views here.
 
 class commonView(TemplateView):
@@ -16,10 +20,11 @@ class commonView(TemplateView):
         context['title'] = 'Neighbourhood'
         return context
 
+
 class ProductListView(ListView):
     model = Product
     template_name = 'products/products.html'
-    paginate_by = 3
+    paginate_by = 2
     def get_queryset(self):
         queryset = super(ProductListView, self).get_queryset()
         category_id = self.kwargs.get('category_id')
@@ -30,8 +35,6 @@ class ProductListView(ListView):
         context['title'] = 'Neighbourhood'
         context['categories'] = ProductCategory.objects.all()
         return context
-
-from django.shortcuts import redirect
 
 @login_required
 def basket_add_product(request, product_id):

@@ -146,3 +146,12 @@ height: 400px;
         color: black;
     }
 }
+.pag_link_1{
+    background-color: #7f4dcf !important;
+    width: 80px;
+    height: 40px;
+    margin-top: 3px;
+    &:hover{
+        color: black;
+    }
+}
