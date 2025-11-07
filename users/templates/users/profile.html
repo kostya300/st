@@ -1,3 +1,4 @@
+
 {% extends 'products/base.html' %}
 {% load static %}
 {% block css %}
@@ -5,7 +6,7 @@
 	<link href="{% static 'vendor/css/profile.css' %}" rel="stylesheet">
 {% endblock %}
 {% block content %}
-	{% if request.user.id == user.id %}
+{% if request.user.id == user.id %}
 	<div class="container profilehtmlblock">
     <div class="row">
         <div class="col-lg-7 ">
@@ -67,6 +68,8 @@
     </div>
 </div>
 	{% else %}
-    Нет доступа
+	<h1>Access Denied</h1>
 {% endif %}
 {% endblock %}
+
+
