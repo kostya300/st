@@ -1,7 +1,6 @@
-from encodings.punycode import selective_find
-
 from django.db import models
 from users.models import User
+
 class ProductCategory(models.Model):
     name = models.CharField(max_length=200)
     description = models.TextField(null=True, blank=True)

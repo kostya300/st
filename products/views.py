@@ -3,7 +3,7 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponseRedirect
 from django.views.generic import TemplateView
 from django.views.generic.list import ListView
-from django.views.generic.edit import UpdateView, DeleteView
+from django.views.generic.edit import UpdateView, DeleteView,CreateView
 from unicodedata import category
 
 from .models import Product, ProductCategory, Basket
@@ -36,6 +36,7 @@ class ProductListView(ListView):
         context['categories'] = ProductCategory.objects.all()
         return context
 
+
 @login_required
 def basket_add_product(request, product_id):
     if not request.user.is_authenticated:
@@ -61,6 +62,8 @@ def basket_add_product(request, product_id):
 @login_required
 def basket_remove(request, basket_id):
     basket = Basket.objects.get(id=basket_id)
+    basket.quantity -= 1
+    basket.save()
     basket.delete()
     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
