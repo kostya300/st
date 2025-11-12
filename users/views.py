@@ -26,11 +26,14 @@ class EmailVerificationView(TemplateView):
     def get(self, request, *args, **kwargs):
         code = kwargs['code']
         email = kwargs['email']
-        user = User.objects.get(email=kwargs['email'])
+        user = User.objects.get(email=email)
         email_verification = EmailVerification.objects.get(user=user, code=code)
         try:
-            user.email_verified = True
-            user.save()
+            if email_verification.is_expired():
+                # Если объекты получены — значит, они существуют
+                user.email_verified = True
+                user.save()
+
             return super().get(request, *args, **kwargs)
 
         except User.DoesNotExist:
