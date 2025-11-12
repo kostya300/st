@@ -1,5 +1,5 @@
 from django.http import HttpResponseRedirect
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy,reverse
 from django.views import View
 
 from django.views.decorators.http import require_http_methods
@@ -16,14 +16,31 @@ from products.models import Basket
 from django.views.generic.base import TemplateView
 from .models import EmailVerification
 from .models import User
-
+import logging
+logger = logging.getLogger(__name__)
 
 class EmailVerificationView(TemplateView):
     title = 'Email Verification'
     template_name = 'users/email_verification.html'
-    def get_context_data(self, **kwargs):
-        context = super(EmailVerificationView, self).get_context_data(**kwargs)
-        return context
+
+    def get(self, request, *args, **kwargs):
+        code = kwargs['code']
+        email = kwargs['email']
+        user = User.objects.get(email=email)
+        email_verification = EmailVerification.objects.get(user=user, code=code)
+        try:
+            if email_verification.is_expired():
+                # Если объекты получены — значит, они существуют
+                user.email_verified = True
+                user.save()
+
+            return super().get(request, *args, **kwargs)
+
+        except User.DoesNotExist:
+            logger.warning(f"Пользователь с почтой {email} существует")
+            return HttpResponseRedirect(reverse('common'))
+        except EmailVerification.DoesNotExist:
+            return HttpResponseRedirect(reverse('common'))
 
 
 

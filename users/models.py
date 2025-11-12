@@ -3,7 +3,12 @@ from django.contrib.auth.models import AbstractUser
 from django.core.validators import FileExtensionValidator
 from django.urls import reverse
 from django.core.mail import send_mail
+from django.urls import reverse
 import uuid
+from django.conf import settings
+from pyexpat.errors import messages
+from django.utils.timezone import now
+
 
 # Create your models here.
 
@@ -23,13 +28,15 @@ class User(AbstractUser):
         return reverse('users:profile', args=(self.id,))
 
 
+
+
+
+
+
 # confirm email adress
-
-
-
 class EmailVerification(models.Model):
-    code = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    code = models.UUIDField(default=uuid.uuid4, unique=True, editable=True)
+    user = models.ForeignKey(to=User, on_delete=models.CASCADE)
     created = models.DateTimeField(auto_now_add=True)
     expiration = models.DateTimeField()
     def __str__(self):
@@ -37,10 +44,17 @@ class EmailVerification(models.Model):
 
 
     def send_verification_email(self):
+        link = reverse('users:email_verification',kwargs={'email':self.user.email,'code':self.code})
+        verification_link = f'<a href="{settings.DOMAIN_NAME}{link}">Подтвердите ваш email</a>'
+        subject = f'Подтверждение для {self.user.username}'
+        message = 'Для подтверждения учётной записи {} перейдите по ссылке: {}'.format(self.user.email,verification_link)
         send_mail(
-            subject='Тема письма',
-            message='Текст письма',
+            subject=subject,
+            message=message,
             from_email='sender@example.com',
             recipient_list=[self.user.email],
             fail_silently=False,
         )
+    def is_expired(self):
+        return True if now() >= self.expiration else False
+# confirm email adress end
