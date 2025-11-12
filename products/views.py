@@ -1,23 +1,39 @@
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render, redirect
 from django.http import HttpResponseRedirect
+from django.views.generic import TemplateView
+from django.views.generic.list import ListView
+from django.views.generic.edit import UpdateView, DeleteView,CreateView
+from unicodedata import category
+
 from .models import Product, ProductCategory, Basket
 from django.contrib.auth.decorators import login_required
-from django.http import JsonResponse
 from django.views.decorators.http import require_http_methods
 from django.views.decorators.csrf import csrf_exempt
-import json
-from django.http import JsonResponse
-
-from django.db.models import Sum
-# Create your views here.
-def common(request):
-    return render(request, "products/common.html")
-def products(request,category_id=None):
-    context = {'categories':ProductCategory.objects.all(),'products':Product.objects.filter(category_id=category_id) if category_id else Product.objects.all(),}
-    return render(request, "products/products.html",context)
-
-
 from django.shortcuts import redirect
+# Create your views here.
+class commonView(TemplateView):
+    template_name = 'products/common.html'
+    def get_context_data(self, **kwargs):
+        context = super(commonView, self).get_context_data(**kwargs)
+        context['title'] = 'Neighbourhood'
+
+
+class ProductListView(ListView):
+    model = Product
+    template_name = 'products/products.html'
+    paginate_by = 2
+    def get_queryset(self):
+        queryset = super(ProductListView, self).get_queryset()
+        category_id = self.kwargs.get('category_id')
+        return queryset.filter(category_id=category_id) if category_id else queryset
+
+    def get_context_data(self, **kwargs):
+        context = super(ProductListView, self).get_context_data(**kwargs)
+        context['title'] = 'Neighbourhood - List'
+        context['categories'] = ProductCategory.objects.all()
+        return context
+
 
 @login_required
 def basket_add_product(request, product_id):
@@ -44,6 +60,8 @@ def basket_add_product(request, product_id):
 @login_required
 def basket_remove(request, basket_id):
     basket = Basket.objects.get(id=basket_id)
+    basket.quantity -= 1
+    basket.save()
     basket.delete()
     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 

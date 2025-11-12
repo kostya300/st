@@ -5,8 +5,8 @@ body {
     background-size: cover;
     -o-background-size: cover;
     padding-top: 56px;
-    background-size: 800px;
-    background-color: black;
+    background-size: 1200px;
+    background-color: #271313;
 }
 .h1common_start{
     color: white;
@@ -37,7 +37,7 @@ background-color: #56cb70;
 
 }
 .navbarmain{
-    background-color: #492682 !important;
+    background-color: #7f4dcf !important;
     border-radius: 10px;
 }
 .link-icon-general-str{
@@ -46,4 +46,112 @@ background-color: #56cb70;
 }
 .common-block-first{
     margin-top: 40px;
+}
+.productscommon{
+    background-color: #e2e1e1;
+    height: 100%;
+
+}
+.category_store_prodhtml{
+    margin-top: 3px;
+    border-radius: 13px;
+    border: 1px solid #b9cf96;
+    color: #454d55;
+}
+.category_store_prodhtml:hover{
+    transform: translateX(5px);
+    transition: 0.2s ease-in;
+    color: #e4516f;
+    border: 1px solid #e4516f;
+    background-color: #ffffff;
+}
+.card-prod-html{
+    margin-top: 3px;
+    border-radius: 13px;
+
+    color: #454d55;
+}
+.card-prod-html:hover{
+    transform: translateY(2px);
+    transition: 0.2s ease-in;
+    color: #e4516f;
+    border: 1px solid #e4516f;
+    background-color: #ffffff;
+    text-decoration: none;
+}
+.commonlink_start_purches1{
+    background-color: rgba(137, 231, 156, 1);
+    text-decoration: none;
+    border-radius: 10px;
+    padding: 12px 11px;
+    color: #554d4d;
+    transition: 0.2s ease-in-out;
+
+}
+.commonlink_start_purches1:hover{
+
+    background-color: #e4516f;
+    border: 1px solid #e4516f;
+}
+.img-prod-html{
+    border-radius: 10px;
+
+    width: 100%;
+    height: 100%;
+}
+.prod-name-products-html{
+    color: #513663;
+}
+.profilehtmlblock{
+    width: 100%;
+    background-color: #e2e1e1;
+    margin-top: 20px;
+    padding-bottom: 20px;
+}
+.carusel-prod{
+height: 400px;
+    width: 100%;
+}
+.carusel-prod-edir{
+    border:3px solid #1c5028;
+}
+.pag_link{
+    width: 40px;
+    height: 40px;
+    text-align: center;
+    vertical-align: center;
+    border-radius: 50%;
+    background-color: #7f4dcf !important;
+    margin:3px;
+    border: none;
+    color: white;
+    &:active{
+    color: black;
+}
+    &:hover{
+    color: black;
+}
+}
+.pag_link_for_before{
+    width: 80px;
+    height: 40px;
+    text-align: center;
+    vertical-align: center;
+
+    background-color: #7f4dcf !important;
+    margin:3px;
+    border: none;
+    color: white;
+    &:hover{
+        color: black;
+    }
+}
+.pag_link_1{
+    background-color: #7f4dcf !important;
+    width: 80px;
+    height: 40px;
+    margin-top: 3px;
+    &:hover{
+        color: black;
+    }
 }
