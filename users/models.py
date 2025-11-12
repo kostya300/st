@@ -45,13 +45,21 @@ class EmailVerification(models.Model):
 
     def send_verification_email(self):
         link = reverse('users:email_verification',kwargs={'email':self.user.email,'code':self.code})
+<<<<<<< HEAD
         verification_link = f'<a href="{settings.DOMAIN_NAME}{link}">Подтвердите ваш email</a>'
+=======
+        verification_link = f'{settings.DOMAIN_NAME}{link}'
+>>>>>>> mainst
         subject = f'Подтверждение для {self.user.username}'
         message = 'Для подтверждения учётной записи {} перейдите по ссылке: {}'.format(self.user.email,verification_link)
         send_mail(
             subject=subject,
             message=message,
+<<<<<<< HEAD
             from_email='sender@example.com',
+=======
+            from_email=settings.EMAIL_HOST_USER,
+>>>>>>> mainst
             recipient_list=[self.user.email],
             fail_silently=False,
         )
