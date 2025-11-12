@@ -71,20 +71,6 @@ class UserProfileView(UpdateView):
     def get_success_url(self):
         return reverse_lazy('users:profile', args=(self.object.id,))
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)  # Добавлен **kwargs
-        context['title'] = 'Neighbourhood - Профиль'
-        baskets = Basket.objects.filter(user=self.object)
-        total_sum = sum(basket.sum() for basket in baskets)
-        total_quantity = sum(basket.quantity for basket in baskets)
-        context['total_sum'] = total_sum
-        context.update({
-            'baskets': baskets,
-            'total_sum': total_sum,
-            'total_quantity': total_quantity,
-        })
-        return context
-
 
 
 
