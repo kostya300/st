@@ -151,5 +151,4 @@ EMAIL_PORT = 465
 EMAIL_HOST_USER = 'st0re-serv1@yandex.ru'
 EMAIL_HOST_PASSWORD = 'qdykfbjyjdjyoqit'
 EMAIL_USE_SSL = True
-
 # qdykfbjyjdjyoqit
