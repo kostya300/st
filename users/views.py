@@ -1,4 +1,6 @@
+from django.http import HttpResponseRedirect
 from django.urls import reverse_lazy
+from django.views import View
 
 from django.views.decorators.http import require_http_methods
 from django.views.decorators.csrf import csrf_exempt
@@ -11,8 +13,19 @@ from .forms import UserLoginForm, UserProfileForm
 from django.contrib.messages.views import SuccessMessageMixin
 from .forms import CustomUserCreationForm
 from products.models import Basket
-
+from django.views.generic.base import TemplateView
+from .models import EmailVerification
 from .models import User
+
+
+class EmailVerificationView(TemplateView):
+    title = 'Email Verification'
+    template_name = 'users/email_verification.html'
+    def get_context_data(self, **kwargs):
+        context = super(EmailVerificationView, self).get_context_data(**kwargs)
+        return context
+
+
 
 # loginform
 class UserLoginView(LoginView):
@@ -20,7 +33,6 @@ class UserLoginView(LoginView):
     template_name = 'users/login.html'
     def get_context_data(self, **kwargs):
         context = super(UserLoginView, self).get_context_data(**kwargs)
-        context['title'] = 'Neighbourhood - Авторизация'
         return context
 
 class UserRegisrtationView(SuccessMessageMixin,CreateView):
@@ -28,7 +40,7 @@ class UserRegisrtationView(SuccessMessageMixin,CreateView):
     form_class = CustomUserCreationForm
     template_name = 'users/register.html'
     success_url = reverse_lazy('users:login')
-    success_message = 'Вы успешно зарегистрировались! Войдите в систему ниже. '
+    success_message = 'Вы успешно зарегистрировались! Подтвердите адрес эл.почты!. '
     def get_context_data(self, **kwargs):
         context = super(UserRegisrtationView,self).get_context_data()
         context['title'] = 'Neighbourhood - Регистрация'

@@ -11,15 +11,15 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_http_methods
 from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import redirect
-from common.views import TitleMixin,ListMixin
 # Create your views here.
-
-class commonView(TitleMixin,TemplateView):
+class commonView(TemplateView):
     template_name = 'products/common.html'
+    def get_context_data(self, **kwargs):
+        context = super(commonView, self).get_context_data(**kwargs)
+        context['title'] = 'Neighbourhood'
 
 
-
-class ProductListView(ListMixin,ListView):
+class ProductListView(ListView):
     model = Product
     template_name = 'products/products.html'
     paginate_by = 2
@@ -30,6 +30,7 @@ class ProductListView(ListMixin,ListView):
 
     def get_context_data(self, **kwargs):
         context = super(ProductListView, self).get_context_data(**kwargs)
+        context['title'] = 'Neighbourhood - List'
         context['categories'] = ProductCategory.objects.all()
         return context
 

@@ -12,6 +12,11 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 
 from pathlib import Path
 import os
+from django.core.mail import send_mail
+from django.core.wsgi import get_wsgi_application
+
+
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -26,6 +31,9 @@ SECRET_KEY = "django-insecure-hx+*^%1*1jpn5^uyv2wa^$jdap51bi!h8+2ckkb8ley2bwk#eb
 DEBUG = True
 
 ALLOWED_HOSTS = ['*']
+
+DOMAIN_NAME = 'http://localhost:8000'
+
 
 
 # Application definition
@@ -136,3 +144,6 @@ AUTH_USER_MODEL = 'users.User'
 LOGIN_URL = '/users/login/'
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
+
+
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"

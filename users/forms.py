@@ -1,9 +1,13 @@
-from cProfile import label
-
+from django.db import transaction
+from django.utils import timezone
+import uuid
+from django.utils.timezone import now
+from datetime import timedelta
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm,UserChangeForm
 from django import forms
-from .models import User
-from django.contrib.auth import get_user_model
+from .models import User,EmailVerification
+
+
 
 
 class UserLoginForm(AuthenticationForm):
@@ -24,6 +28,24 @@ class CustomUserCreationForm(UserCreationForm):
     class Meta:
         model = User
         fields = ('first_name', 'last_name', 'email', 'username', 'password1', 'password2')
+
+    @transaction.atomic
+    def save(self, commit=True):
+        user = super(CustomUserCreationForm, self).save(commit=False)
+
+        if commit:
+            user.save()
+            expiration = timezone.now() + timedelta(hours=48)
+            record = EmailVerification.objects.create(
+                user=user,
+                expiration=expiration
+            )
+            record.send_verification_email()
+
+        return user
+
+
+
 # А в разметке для инпутов добавляем атрибут name, в котором значениями будут username и password. И обязательно инпут и лэбел должны быть связаны через id, т.е у label должен быть атрибут for  в котором должно быть указано то же самое, что и в id input.
 class UserProfileForm(UserChangeForm):
     first_name = forms.CharField(required=True,widget=forms.TextInput(attrs={'class': 'form-control py-4'}))
@@ -35,4 +57,7 @@ class UserProfileForm(UserChangeForm):
     class Meta:
         model = User
         fields = ('first_name', 'last_name', 'image', 'username', 'email')
+
+
+
 # max_length=50,

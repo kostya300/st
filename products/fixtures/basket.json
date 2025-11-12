@@ -1,1 +1,1 @@
-[]
+[{"model": "products.basket", "pk": 72, "fields": {"user": 2, "products_id": 3, "quantity": 1}}, {"model": "products.basket", "pk": 73, "fields": {"user": 2, "products_id": 7, "quantity": 2}}, {"model": "products.basket", "pk": 74, "fields": {"user": 2, "products_id": 2, "quantity": 1}}]
