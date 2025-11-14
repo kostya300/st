@@ -10,6 +10,7 @@ urlpatterns = [
     path('category/<int:category_id>/', ProductListView.as_view(), name='category_detail'),
     path('baskets/add/<int:product_id>/',views.basket_add_product, name='basket_add'),
     path('basket/remove/<int:basket_id>/',views.basket_remove, name='basket_remove'),
+    path('basket/update/<int:basket_id>/', views.update_basket_quantity, name='update_basket_quantity'),
 
 ]
 # 123
