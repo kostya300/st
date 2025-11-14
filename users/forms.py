@@ -32,7 +32,6 @@ class CustomUserCreationForm(UserCreationForm):
     @transaction.atomic
     def save(self, commit=True):
         user = super(CustomUserCreationForm, self).save(commit=False)
-
         if commit:
             user.save()
             expiration = timezone.now() + timedelta(hours=48)

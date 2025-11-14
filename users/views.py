@@ -30,7 +30,6 @@ class EmailVerificationView(TemplateView):
         email_verification = EmailVerification.objects.get(user=user, code=code)
         try:
             if email_verification.is_expired():
-                # Если объекты получены — значит, они существуют
                 user.email_verified = True
                 user.save()
 
@@ -70,6 +69,7 @@ class UserProfileView(UpdateView):
     template_name = 'users/profile.html'
     def get_success_url(self):
         return reverse_lazy('users:profile', args=(self.object.id,))
+
 
 
 
