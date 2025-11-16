@@ -9,6 +9,7 @@ from .views import UserLoginView, UserRegisrtationView, UserProfileView, EmailVe
 app_name = 'users'
 urlpatterns = [
     path('login/', UserLoginView.as_view() ,name='login'),
+    # path('accounts/<str:vk>/', UserLoginView.as_view() , name='login_vk'),
     path('register/', UserRegisrtationView.as_view() ,name='register'),
     path('profile/<int:pk>/', login_required(UserProfileView.as_view()), name='profile'),
     path('logout/', LogoutView.as_view() , name='logout'),
