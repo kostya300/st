@@ -35,6 +35,7 @@ DOMAIN_NAME = 'http://localhost:8000'
 # Application definition
 
 INSTALLED_APPS = [
+    "debug_toolbar",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -43,6 +44,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
 
     # Обязательные для allauth
+
     'django.contrib.sites',  # требуется для allauth
     'allauth',  # основная функциональность
     'allauth.account',  # управление учётными записями
@@ -51,6 +53,7 @@ INSTALLED_APPS = [
     'allauth.socialaccount.providers.vk',
 
     # Ваши приложения
+
     "products.apps.ProductsConfig",
     'django_dump_load_utf8',
     "users.apps.UsersConfig",
@@ -65,6 +68,7 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "allauth.account.middleware.AccountMiddleware",
+    "debug_toolbar.middleware.DebugToolbarMiddleware",
 ]
 
 ROOT_URLCONF = "store.urls"
@@ -87,6 +91,10 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = "store.wsgi.application"
+
+INTERNAL_IPS = [
+    "127.0.0.1",
+]
 
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
@@ -162,8 +170,6 @@ EMAIL_USE_SSL = False  # Важно: False при использовании TLS
 EMAIL_HOST_USER = 'kostya.barnung@gmail.com'  # Ваш полный Gmail
 EMAIL_HOST_PASSWORD = config("GMAIL_APP_PASSWORD", default='')
 
-
-
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
     'allauth.account.auth_backends.AuthenticationBackend',
@@ -188,4 +194,3 @@ SOCIALACCOUNT_PROVIDERS = {
     #     }
     # }
 }
-
