@@ -9,17 +9,15 @@ https://docs.djangoproject.com/en/5.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
-
+from decouple import config
 from pathlib import Path
 import os
-from django.core.mail import send_mail
-from django.core.wsgi import get_wsgi_application
+import requests
 
-
+EMAIL_HOST_PASSWORD = os.getenv('GMAIL_APP_PASSWORD')
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
@@ -34,8 +32,6 @@ ALLOWED_HOSTS = ['*']
 
 DOMAIN_NAME = 'http://localhost:8000'
 
-
-
 # Application definition
 
 INSTALLED_APPS = [
@@ -45,6 +41,16 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+
+    # Обязательные для allauth
+    'django.contrib.sites',  # требуется для allauth
+    'allauth',  # основная функциональность
+    'allauth.account',  # управление учётными записями
+    'allauth.socialaccount',  # для соцсетей (опционально)
+    'allauth.socialaccount.providers.github',
+    'allauth.socialaccount.providers.vk',
+
+    # Ваши приложения
     "products.apps.ProductsConfig",
     'django_dump_load_utf8',
     "users.apps.UsersConfig",
@@ -58,6 +64,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "allauth.account.middleware.AccountMiddleware",
 ]
 
 ROOT_URLCONF = "store.urls"
@@ -72,6 +79,7 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
+                'django.template.context_processors.request',
                 "products.context_processors.baskets",
             ],
         },
@@ -79,7 +87,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = "store.wsgi.application"
-
 
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
@@ -94,7 +101,6 @@ DATABASES = {
         "PORT": "5432",
     }
 }
-
 
 # Password validation 123
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
@@ -114,7 +120,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
 
@@ -128,7 +133,6 @@ USE_I18N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
@@ -136,7 +140,7 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     BASE_DIR / 'static',
 ]
-MEDIA_ROOT =  os.path.join(BASE_DIR, 'media')
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 
 # Default primary key field type
@@ -150,10 +154,38 @@ LOGIN_URL = '/users/login/'
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
 
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_USE_SSL = False  # Важно: False при использовании TLS
+EMAIL_HOST_USER = 'kostya.barnung@gmail.com'  # Ваш полный Gmail
+EMAIL_HOST_PASSWORD = config("GMAIL_APP_PASSWORD", default='')
 
-EMAIL_HOST = 'smtp.yandex.ru'
-EMAIL_PORT = 465
-EMAIL_HOST_USER = 'st0re-serv1@yandex.ru'
-EMAIL_HOST_PASSWORD = 'qdykfbjyjdjyoqit'
-EMAIL_USE_SSL = True
-# qdykfbjyjdjyoqit
+
+
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',
+]
+
+SOCIALACCOUNT_QUERY_EMAIL = True
+
+SITE_ID = 1
+
+SOCIALACCOUNT_PROVIDERS = {
+    'github': {
+        'SCOPE': ['user',
+                  'user:email',
+                  ],
+    },
+    # 'vk': {
+    #     'SCOPE': ['email'],
+    #     'AUTH_PARAMS': {'response_type': 'code'},
+    #     'APP': {
+    #         'client_id': '54324268',
+    #         'secret': 'BNqGYxtfVwuC9SfEul1d',
+    #     }
+    # }
+}
+
