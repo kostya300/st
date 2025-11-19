@@ -35,6 +35,7 @@ class User(AbstractUser):
 
 # confirm email adress
 class EmailVerification(models.Model):
+    objects = None
     code = models.UUIDField(default=uuid.uuid4, unique=True, editable=True)
     user = models.ForeignKey(to=User, on_delete=models.CASCADE)
     created = models.DateTimeField(auto_now_add=True)

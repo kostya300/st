@@ -28,9 +28,9 @@ SECRET_KEY = "django-insecure-hx+*^%1*1jpn5^uyv2wa^$jdap51bi!h8+2ckkb8ley2bwk#eb
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 
-DOMAIN_NAME = 'http://localhost:8000'
+DOMAIN_NAME = 'http://127.0.0.1:8000'
 
 # Application definition
 
@@ -167,9 +167,8 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_USE_SSL = False  # Важно: False при использовании TLS
 EMAIL_HOST_USER = 'kostya.barnung@gmail.com'  # Ваш полный Gmail
-EMAIL_HOST_PASSWORD = config("GMAIL_APP_PASSWORD", default='')
+EMAIL_HOST_PASSWORD = 'ysdv aoyt onyj goub'
 
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
@@ -186,10 +185,8 @@ SOCIALACCOUNT_PROVIDERS = {
                   'user:email',
                   ],
     },
-    'google': {
-            'SCOPE': ['profile', 'email'],
-            'AUTH_PARAMS': {'access_type': 'online'},
-            'CLIENT_ID': '855986169114-dhiopofhf3tlfuu36e6eejra8ivjsf4e',
-            'SECRET': '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',
-        }
 }
+
+#celery
+CELERY_BROKER_URL = 'redis://127.0.0.1:6379/'
+CELERY_RESULT_BACKEND = 'redis://127.0.0.1:6379/'
