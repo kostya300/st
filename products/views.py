@@ -7,6 +7,8 @@ from django.views.generic import TemplateView
 from django.views.generic.list import ListView
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
+from unicodedata import category
+from django.core.cache import cache
 from .models import Basket
 
 from .models import Product, ProductCategory, Basket
@@ -33,8 +35,13 @@ class ProductListView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super(ProductListView, self).get_context_data(**kwargs)
+        categories = cache.get('categories')
+        if not categories:
+            context['categories'] = ProductCategory.objects.all()
+            cache.set('categories', context['categories'], 30)
+        else:
+            context['categories'] = categories
         context['title'] = 'Neighbourhood - List'
-        context['categories'] = ProductCategory.objects.all()
         return context
 
 
