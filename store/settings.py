@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'allauth.socialaccount',  # для соцсетей (опционально)
     'allauth.socialaccount.providers.github',
     'allauth.socialaccount.providers.vk',
+    'allauth.socialaccount.providers.google',
 
     # Ваши приложения
 
@@ -185,12 +186,10 @@ SOCIALACCOUNT_PROVIDERS = {
                   'user:email',
                   ],
     },
-    # 'vk': {
-    #     'SCOPE': ['email'],
-    #     'AUTH_PARAMS': {'response_type': 'code'},
-    #     'APP': {
-    #         'client_id': '54324268',
-    #         'secret': 'BNqGYxtfVwuC9SfEul1d',
-    #     }
-    # }
+    'google': {
+            'SCOPE': ['profile', 'email'],
+            'AUTH_PARAMS': {'access_type': 'online'},
+            'CLIENT_ID': '855986169114-dhiopofhf3tlfuu36e6eejra8ivjsf4e',
+            'SECRET': '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',
+        }
 }
