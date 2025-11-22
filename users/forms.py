@@ -35,13 +35,6 @@ class CustomUserCreationForm(UserCreationForm):
         if commit:
             user.save()
             send_email_verification.delay(user.id)
-            # expiration = timezone.now() + timedelta(hours=48)
-            # record = EmailVerification.objects.create(
-            #     user=user,
-            #     expiration=expiration
-            # )
-            # record.send_verification_email()
-
         return user
 
 

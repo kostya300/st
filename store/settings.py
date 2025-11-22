@@ -58,6 +58,7 @@ INSTALLED_APPS = [
     "products.apps.ProductsConfig",
     'django_dump_load_utf8',
     "users.apps.UsersConfig",
+    'orders',
 ]
 
 MIDDLEWARE = [
