@@ -4,7 +4,6 @@ from products.views import commonView
 from django.conf.urls.static import static
 from django.conf import settings
 import mimetypes
-from debug_toolbar.toolbar import debug_toolbar_urls  # Move import here
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -15,18 +14,16 @@ urlpatterns = [
     path('accounts/', include('allauth.urls')),
 ]
 
-
 if settings.DEBUG:
-    # Инструментальная панель настройки
+    # Добавляем Debug Toolbar корректно — только через debug_toolbar_urls()
+    from debug_toolbar.toolbar import debug_toolbar_urls
     urlpatterns = [
-        *debug_toolbar_urls(),
+        *debug_toolbar_urls(),  # ← Это уже включает нужные URL с namespace='djdt'
         *urlpatterns,
-
     ]
-    # Инструментальная панель настройки
-    mimetypes.add_type("application/javascript", ".js", True)
-    # Инструментальная панель настройки
-    urlpatterns.append(path('__debug__/', include('debug_toolbar.urls')))
 
-    # статические файлы
+    # Регистрируем JS-тип (нужно только в Windows, но безопасно везде)
+    mimetypes.add_type("application/javascript", ".js", True)
+
+    # Статические и медиа-файлы
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -26,6 +26,5 @@ class Order(models.Model):
     status = models.SmallIntegerField(default=CREATED, choices=STATUSES)
     initiator = models.ForeignKey(User, on_delete=models.CASCADE)
 
-    @property
     def __str__(self):
         return f'Заказ {self.first_name} {self.last_name}'
