@@ -5,6 +5,7 @@ from django.conf.urls.static import static
 from django.conf import settings
 import mimetypes
 
+
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("", commonView.as_view(), name="common"),
