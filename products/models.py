@@ -1,6 +1,5 @@
 from locale import currency
 from tkinter.font import names
-
 from django.db import models
 from users.models import User
 import stripe
@@ -57,3 +56,11 @@ class Basket(models.Model):
 
     def sum(self):
         return self.products_id.price * self.quantity
+    def de_json(self):
+        basket_item = {
+            'product': self.products_id.name,
+            'quantity': self.quantity,
+            'price': float(self.products_id.price),
+            'sum': float(self.sum()),
+        }
+        return basket_item
