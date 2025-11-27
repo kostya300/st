@@ -1,0 +1,124 @@
+from http import HTTPStatus
+from importlib.metadata import metadata
+from math import e
+
+import stripe
+from django.urls.base import reverse
+from django.http import HttpResponseRedirect
+from django.views.generic.base import TemplateView
+from django.shortcuts import render
+from django.views.generic.edit import CreateView, UpdateView
+from .forms import OrderForm
+from django.conf import settings
+from django.urls import reverse_lazy
+import logging
+from django.views.decorators.csrf import csrf_exempt
+from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseServerError
+from .models import Order
+from products.models import Basket
+
+stripe.api_key = settings.STRIPE_SECRET_KEY
+logger = logging.getLogger(__name__)
+
+# Create your views here.
+
+class SuccessTemplateView(TemplateView):
+    template_name = 'orders/success.html'
+    title = 'Success'
+class CanceledTemplateView(TemplateView):
+    template_name = 'orders/canceled.html'
+
+
+
+class OrdersCreateView(CreateView):
+    template_name = "orders/order-create.html"
+    form_class = OrderForm
+    title = 'Neighbourhood - Заказы'
+    success_url = reverse_lazy('orders:orders_create')
+
+    def post(self, request, *args, **kwargs):
+        super(OrdersCreateView, self).post(request, *args, **kwargs)
+        baskets = Basket.objects.filter(user=self.request.user)
+        line_items = []
+        for basket in baskets:
+            item = {
+                'price': basket.products_id.stripe_product_price_id,
+                'quantity': basket.quantity,
+            }
+            line_items.append(item)
+
+        checkout_session = stripe.checkout.Session.create(
+            line_items=line_items,
+            metadata = {'order_id': self.object.id},
+            mode='payment',
+            success_url='{}{}'.format(settings.DOMAIN_NAME, reverse('orders:order_success')),
+            cancel_url='{}{}'.format(settings.DOMAIN_NAME, reverse('orders:order_canceled')),
+        )
+        return HttpResponseRedirect(checkout_session.url, status=HTTPStatus.SEE_OTHER)
+    def form_valid(self, form):
+        form.instance.initiator = self.request.user
+        response = super().form_valid(form)
+        logger.info(f"Заказ создан пользователем {self.request.user}")
+        return response
+
+
+# acct_1SXKvwBKBCHr8ZT8
+def fulfill_checkout(checkout_id):
+    """
+    Обрабатывает успешный платёж:
+    - обновляет статус заказа
+    - отправляет уведомление пользователю
+    - т. д.
+    """
+    try:
+        # Пример: найти заказ по ID чекаута
+        order = Order.objects.get(stripe_checkout_id=checkout_id)
+        order.status = 'paid'
+        order.save()
+
+        # Дополнительно: отправить email
+        from django.core.mail import send_mail
+        send_mail(
+            'Ваш заказ оплачен!',
+            f'Номер заказа: {order.id}',
+            'from@example.com',
+            [order.user.email],
+        )
+    except Order.DoesNotExist:
+        print(f"Заказ с checkout_id={checkout_id} не найден")
+    except Exception as e:
+        print(f"Ошибка при обработке заказа: {e}")
+
+
+
+
+@csrf_exempt
+def stripe_webhook_view(request):
+    payload = request.body
+    sig_header = request.META['HTTP_STRIPE_SIGNATURE']
+    event = None
+    try:
+        event = stripe.Webhook.construct_event(
+            payload, sig_header, settings.STRIPE_WEBHOOK_SECRET
+        )
+    except ValueError as e:
+        # Invalid payload
+        return HttpResponse(status=400)
+    except stripe.error.SignatureVerificationError as e:
+        # Invalid signature
+        return HttpResponse(status=400)
+
+    if ('data' in event and
+            'object' in event['data'] and
+            'id' in event['data']['object']):
+
+        checkout_id = event['data']['object']['id']
+        fulfill_checkout(checkout_id)  # Теперь функция существует!
+    else:
+        print("Неверные данные от Stripe:", event)
+        return HttpResponseBadRequest("Invalid event data")
+
+    return HttpResponse(status=200)
+def fulfill_order(session):
+    order_id = int(session.meta.order_id)
+    print('order')

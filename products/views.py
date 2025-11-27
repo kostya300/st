@@ -1,10 +1,15 @@
+import json
+
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render, redirect
 from django.http import HttpResponseRedirect
 from django.views.generic import TemplateView
 from django.views.generic.list import ListView
-from django.views.generic.edit import UpdateView, DeleteView,CreateView
+from django.http import JsonResponse
+from django.contrib.auth.decorators import login_required
 from unicodedata import category
+from django.core.cache import cache
+from .models import Basket
 
 from .models import Product, ProductCategory, Basket
 from django.contrib.auth.decorators import login_required
@@ -30,8 +35,13 @@ class ProductListView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super(ProductListView, self).get_context_data(**kwargs)
+        categories = cache.get('categories')
+        if not categories:
+            context['categories'] = ProductCategory.objects.all()
+            cache.set('categories', context['categories'], 30)
+        else:
+            context['categories'] = categories
         context['title'] = 'Neighbourhood - List'
-        context['categories'] = ProductCategory.objects.all()
         return context
 
 
@@ -66,6 +76,46 @@ def basket_remove(request, basket_id):
     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
 
+@login_required
+def update_basket_quantity(request, basket_id):
+    if request.method == 'POST':
+        try:
+            basket = Basket.objects.get(id=basket_id, user=request.user)
+            data = json.loads(request.body)
+            new_quantity = data.get('quantity')
+
+            if new_quantity < 1:
+                return JsonResponse({
+                    'success': False,
+                    'error': 'Количество должно быть ≥ 1'
+                })
+
+            basket.quantity = new_quantity
+            basket.save()
+
+            # Пересчитываем сумму для этого товара
+            item_total = basket.sum()
+
+            # Пересчитываем общую сумму корзины
+            total_basket = sum(
+                item.sum() for item in Basket.objects.filter(user=request.user)
+            )
+
+            return JsonResponse({
+                'success': True,
+                'total': float(item_total),
+                'total_basket': float(total_basket)
+            })
+        except Basket.DoesNotExist:
+            return JsonResponse({
+                'success': False,
+                'error': 'Корзина не найдена'
+            })
+
+    return JsonResponse({
+        'success': False,
+        'error': 'Неверный метод запроса'
+    })
 
 
 

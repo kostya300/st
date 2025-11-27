@@ -37,7 +37,7 @@ background-color: #56cb70;
 
 }
 .navbarmain{
-    background-color: #7f4dcf !important;
+    background-color: #70609d !important;
     border-radius: 10px;
 }
 .link-icon-general-str{
@@ -153,5 +153,6 @@ height: 400px;
     margin-top: 3px;
     &:hover{
         color: black;
+
     }
 }

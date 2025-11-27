@@ -10,23 +10,25 @@
 
 {% block content %}
 	<section>
-    <div class="container body">
-        <div class="row">
-            <div class="col-lg-6 common-block-first">
-                <h1 class="mt-5 h1common_start" >Neighbourhood</h1>
-                <p class="h1common_start-p">
-                    Новые образы и лучшие бренды.
-	                {% if is_promotion %}
-                    Бесплатная доставка по всему миру! Аутлет: до -70% Собственный бренд. -20% новым покупателям.
-	                {% endif %}
-                </p>
-{#                <button id="start-purchase-btn" type="button" class="btn btn-lg button-commonlink_start_purches">#}
-                    <a id="start-purchase-link" href="{% url 'products:catalog_general' %}" class="commonlink_start_purches">
-                        Начать покупки!
-                    </a>
-{#                </button>#}
-            </div>
-        </div>
-    </div>
-</section>
+		<div class="container body">
+			<div class="row">
+				<div class="col-lg-6 common-block-first">
+					<h1 class="mt-5 h1common_start">Neighbourhood</h1>
+					<p class="h1common_start-p">
+						Новые образы и лучшие бренды.
+						{% if is_promotion %}
+							Бесплатная доставка по всему миру! Аутлет: до -70% Собственный бренд. -20% новым
+							покупателям.
+						{% endif %}
+					</p>
+					{#                <button id="start-purchase-btn" type="button" class="btn btn-lg button-commonlink_start_purches">#}
+					<a id="start-purchase-link" href="{% url 'products:catalog_general' %}"
+					   class="commonlink_start_purches">
+						Начать покупки!
+					</a>
+					{#                </button>#}
+				</div>
+			</div>
+		</div>
+	</section>
 {% endblock %}
