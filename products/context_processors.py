@@ -21,5 +21,6 @@ def baskets(request):
             'total_quantity': 0,
         }
 
-    return  context  # Рендерим шаблон
+    return  context
+
 

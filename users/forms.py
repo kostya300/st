@@ -5,7 +5,7 @@ from django.utils.timezone import now
 from datetime import timedelta
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm,UserChangeForm
 from django import forms
-from .models import User
+from .models import User, EmailVerification
 from users.tasks import send_email_verification
 
 
@@ -31,11 +31,15 @@ class CustomUserCreationForm(UserCreationForm):
 
     @transaction.atomic
     def save(self, commit=True):
-        user = super(CustomUserCreationForm, self).save(commit=False)
-        if commit:
-            user.save()
-            send_email_verification.delay(user.id)
+        user = super(CustomUserCreationForm, self).save(commit=True)
+        expiration = timezone.now() + timedelta(hours=48)
+        record = EmailVerification.objects.create(code = uuid.uuid4(),user=user,expiration=expiration)
+        record.send_verification_email()
         return user
+        # if commit:
+        #     user.save()
+        #     send_email_verification.delay(user.id)
+
 
 
 

@@ -118,4 +118,3 @@ def update_basket_quantity(request, basket_id):
     })
 
 
-
