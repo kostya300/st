@@ -1,7 +1,8 @@
+import smtplib
 from http import HTTPStatus
 from importlib.metadata import metadata
-from math import e
-
+from django.conf import settings
+from django.core.mail import send_mail
 import stripe
 from django.urls.base import reverse
 from django.http import HttpResponseRedirect
@@ -64,30 +65,34 @@ class OrdersCreateView(CreateView):
 
 # acct_1SXKvwBKBCHr8ZT8
 def fulfill_checkout(checkout_id):
-    """
-    Обрабатывает успешный платёж:
-    - обновляет статус заказа
-    - отправляет уведомление пользователю
-    - т. д.
-    """
     try:
-        # Пример: найти заказ по ID чекаута
         order = Order.objects.get(stripe_checkout_id=checkout_id)
         order.status = 'paid'
         order.save()
 
-        # Дополнительно: отправить email
-        from django.core.mail import send_mail
-        send_mail(
-            'Ваш заказ оплачен!',
-            f'Номер заказа: {order.id}',
-            'from@example.com',
-            [order.user.email],
-        )
+        # Отправка письма с детальной обработкой ошибок
+        try:
+            send_mail(
+                'Ваш заказ оплачен!',
+                f'Номер заказа: {order.id}',
+                settings.EMAIL_HOST_USER,
+                [order.user.email],
+                fail_silently=False,
+                auth_user=settings.EMAIL_HOST_USER,
+                auth_password=settings.EMAIL_HOST_PASSWORD,
+            )
+            logger.info(f"Письмо отправлено на {order.user.email}")
+        except smtplib.SMTPAuthenticationError:
+            logger.error("Ошибка аутентификации SMTP")
+        except smtplib.SMTPRecipientsRefused:
+            logger.error("Адрес получателя отклонён")
+        except Exception as e:
+            logger.error(f"Неизвестная ошибка отправки: {e}")
+
     except Order.DoesNotExist:
-        print(f"Заказ с checkout_id={checkout_id} не найден")
+        logger.warning(f"Заказ с checkout_id={checkout_id} не найден")
     except Exception as e:
-        print(f"Ошибка при обработке заказа: {e}")
+        logger.error(f"Критическая ошибка: {e}")
 
 
 
@@ -123,4 +128,8 @@ def fulfill_order(session):
     order_id = int(session.meta.order_id)
     order = Order.objects.get(id=order_id)
     order.update_after_payment()
+<<<<<<< HEAD
     print('order')
+=======
+    print('order')
+>>>>>>> mainst

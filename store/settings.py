@@ -107,9 +107,9 @@ DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql_psycopg2",
         "NAME": "store_db",
+        "PASSWORD": "store_password",
         "USER": "store_username",
-        "PASSWORD": "21",
-        "HOST": "localhost",
+        "HOST": "127.0.0.1",
         "PORT": "5432",
     }
 }
