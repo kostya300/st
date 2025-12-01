@@ -128,8 +128,7 @@ def fulfill_order(session):
     order_id = int(session.meta.order_id)
     order = Order.objects.get(id=order_id)
     order.update_after_payment()
-<<<<<<< HEAD
+
     print('order')
-=======
     print('order')
->>>>>>> mainst
+

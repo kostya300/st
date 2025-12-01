@@ -188,6 +188,19 @@ SOCIALACCOUNT_PROVIDERS = {
                   'user:email',
                   ],
     },
+'google': {
+        'APP': {
+            'client_id': '48328434690-ja9oqgci117nveu6aism8tgl0phv9gdq.apps.googleusercontent.com',
+            'secret': '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',
+        },
+        'SCOPE': [
+            'profile',
+            'email',
+        ],
+        'AUTH_PARAMS': {
+            'access_type': 'online',
+        }
+    }
 }
 
 # celery

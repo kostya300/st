@@ -90,18 +90,15 @@ class Basket(models.Model):
         return self.products_id.price * self.quantity
     def de_json(self):
         basket_item = {
-<<<<<<< HEAD
-            'product': self.products_id.name,
-            'quantity': self.quantity,
-            'price': float(self.products_id.price),
-            'sum': float(self.sum()),
-        }
-=======
+        #     'product': self.products_id.name,
+        #     'quantity': self.quantity,
+        #     'price': float(self.products_id.price),
+        #     'sum': float(self.sum()),
+        # }
+
             'product_id': self.products_id.id if self.products_id else None,
             'product_name': self.products_id.name if self.products_id else 'Неизвестно',
             'quantity': self.quantity,
             'sum': float(self.sum()) if self.sum() is not None else 0.0,
         }
-
->>>>>>> mainst
         return basket_item
