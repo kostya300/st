@@ -19,6 +19,7 @@ from .models import Order
 from products.models import Basket
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
+
 logger = logging.getLogger(__name__)
 
 # Create your views here.
@@ -31,14 +32,14 @@ class CanceledTemplateView(TemplateView):
 
 
 
-class OrdersCreateView(CreateView):
+class OrderCreateView(CreateView):
     template_name = "orders/order-create.html"
     form_class = OrderForm
     title = 'Neighbourhood - Заказы'
     success_url = reverse_lazy('orders:orders_create')
 
     def post(self, request, *args, **kwargs):
-        super(OrdersCreateView, self).post(request, *args, **kwargs)
+        super(OrderCreateView, self).post(request, *args, **kwargs)
         baskets = Basket.objects.filter(user=self.request.user)
         line_items = []
         for basket in baskets:
@@ -69,8 +70,6 @@ def fulfill_checkout(checkout_id):
         order = Order.objects.get(stripe_checkout_id=checkout_id)
         order.status = 'paid'
         order.save()
-
-        # Отправка письма с детальной обработкой ошибок
         try:
             send_mail(
                 'Ваш заказ оплачен!',
@@ -130,5 +129,5 @@ def fulfill_order(session):
     order.update_after_payment()
 
     print('order')
-    print('order')
+
 

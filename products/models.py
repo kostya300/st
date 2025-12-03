@@ -2,11 +2,16 @@ from locale import currency
 from tkinter.font import names
 from django.db import models
 from users.models import User
-import stripe
 from django.conf import settings
+import logging
+import stripe
+from django.db import transaction
+from django.core.exceptions import ValidationError
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
+
+from django.core.exceptions import ValidationError
 
 class ProductCategory(models.Model):
     name = models.CharField(max_length=200)
@@ -28,54 +33,18 @@ class Product(models.Model):
     def __str__(self):
         return self.name
 
-    def save(self, *args, **kwargs):
-        if self.pk:  # Если объект уже существует
-            old_price = Product.objects.get(pk=self.pk).price
-            if self.price != old_price:
-                # Цена изменилась — создаём новую цену в Stripe
-                stripe_product_price = self.create_stripe_product_price()
-                self.stripe_product_price_id = stripe_product_price['id']
-        elif not self.stripe_product_price_id:  # Новый объект
+    def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
+        if not self.stripe_product_price_id:
             stripe_product_price = self.create_stripe_product_price()
             self.stripe_product_price_id = stripe_product_price['id']
-        super().save(*args, **kwargs)
+        super(Product, self).save(force_insert=False, force_update=False, using=None, update_fields=None)
 
     def create_stripe_product_price(self):
-        try:
-            stripe_product = stripe.Product.create(name=self.name)
-            stripe_product_price = stripe.Price.create(
-                product=stripe_product['id'],
-                unit_amount=round(self.price * 100),
-                currency='rub'
-            )
-            return stripe_product_price
-        except stripe.error.StripeError as e:
-            import logging
-            logger = logging.getLogger(__name__)
-            logger.error(f"Ошибка Stripe: {e}")
-            raise
+        stripe_product = stripe.Product.create(name=self.name)
+        stripe_product_price = stripe.Price.create(
+            product=stripe_product['id'],unit_amount=round(self.price * 100), currency='rub',)
+        return stripe_product_price
 
-
-# 123
-    def sync_stripe_price(self):
-        """Синхронизирует цену в Stripe с локальной"""
-        if not self.stripe_product_price_id:
-            return self.create_stripe_product_price()
-
-        current_price = round(self.price * 100)
-        stripe_price = stripe.Price.retrieve(self.stripe_product_price_id)
-
-        if stripe_price.unit_amount != current_price:
-            new_price = stripe.Price.create(
-                product=stripe_price.product,
-                unit_amount=current_price,
-                currency='rub'
-            )
-            self.stripe_product_price_id = new_price.id
-            self.save()
-# 123
-
-#   new class basket
 class Basket(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     products_id = models.ForeignKey(Product, on_delete=models.CASCADE)
@@ -90,15 +59,15 @@ class Basket(models.Model):
         return self.products_id.price * self.quantity
     def de_json(self):
         basket_item = {
-        #     'product': self.products_id.name,
-        #     'quantity': self.quantity,
-        #     'price': float(self.products_id.price),
-        #     'sum': float(self.sum()),
-        # }
-
-            'product_id': self.products_id.id if self.products_id else None,
-            'product_name': self.products_id.name if self.products_id else 'Неизвестно',
+            'product': self.products_id.name,
             'quantity': self.quantity,
-            'sum': float(self.sum()) if self.sum() is not None else 0.0,
+            'price': float(self.products_id.price),
+            'sum': float(self.sum()),
         }
+
+        #     'product_id': self.products_id.id if self.products_id else None,
+        #     'product_name': self.products_id.name if self.products_id else 'Неизвестно',
+        #     'quantity': self.quantity,
+        #     'sum': float(self.sum()) if self.sum() is not None else 0.0,
+        # }
         return basket_item
