@@ -8,6 +8,7 @@ from django.urls.base import reverse
 from django.http import HttpResponseRedirect
 from django.views.generic.base import TemplateView
 from django.shortcuts import render
+from django.views.generic.list import ListView
 from django.views.generic.edit import CreateView, UpdateView
 from .forms import OrderForm
 from django.conf import settings
@@ -26,12 +27,14 @@ logger = logging.getLogger(__name__)
 
 class SuccessTemplateView(TemplateView):
     template_name = 'orders/success.html'
-    title = 'Success'
+    title = 'Успешно'
 class CanceledTemplateView(TemplateView):
     template_name = 'orders/canceled.html'
 
-
-
+class OrderListView(ListView):
+    template_name = 'orders/orders.html'
+    title = 'Заказ'
+    queryset = Order.objects.all()
 class OrderCreateView(CreateView):
     template_name = "orders/order-create.html"
     form_class = OrderForm

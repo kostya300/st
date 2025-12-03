@@ -8,6 +8,7 @@ import logging
 import stripe
 from django.db import transaction
 from django.core.exceptions import ValidationError
+from decimal import ROUND_HALF_UP
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
@@ -35,16 +36,35 @@ class Product(models.Model):
         return self.name
 
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
-        if not self.stripe_product_price_id:
-            stripe_product_price = self.create_stripe_product_price()
-            self.stripe_product_price_id = stripe_product_price['id']
-        super(Product, self).save(force_insert=False, force_update=False, using=None, update_fields=None)
+        if self.pk is None and not self.stripe_product_price_id:
+            try:
+                stripe_product_price = self.create_stripe_product_price()
+                self.stripe_product_price_id = stripe_product_price['id']
+            except stripe.error.StripeError as e:
+                raise ValidationError(f"Ошибка в Stripe: {e}")
+        super().save(force_insert, force_update, using, update_fields)
 
     def create_stripe_product_price(self):
         stripe_product = stripe.Product.create(name=self.name)
+        unit_amount = int((self.price * 100).quantize(0, rounding=ROUND_HALF_UP))
         stripe_product_price = stripe.Price.create(
-            product=stripe_product['id'],unit_amount=round(self.price * 100), currency='rub',)
+            product=stripe_product['id'],
+            unit_amount=unit_amount,
+            currency=self.currency.lower(),
+        )
         return stripe_product_price
+
+    def update_stripe_price(self):
+        if not self.stripe_product_price_id:
+            return
+        try:
+            unit_amount = int((self.price * 100).quantize(0, rounding=ROUND_HALF_UP))
+            stripe.Price.modify(
+                self.stripe_product_price_id,
+                unit_amount=unit_amount,
+            )
+        except stripe.error.StripeError as e:
+            logger.error(f"Ошибка обновления цены в Stripe: {e}")
 
 
 class BasketQuerySet(models.QuerySet):
