@@ -10,6 +10,7 @@ from django.views.generic.base import TemplateView
 from django.shortcuts import render
 from django.views.generic.list import ListView
 from django.views.generic.edit import CreateView, UpdateView
+from django.views.generic.detail import DetailView
 from .forms import OrderForm
 from django.conf import settings
 from django.urls import reverse_lazy
@@ -35,6 +36,21 @@ class OrderListView(ListView):
     template_name = 'orders/orders.html'
     title = 'Заказ'
     queryset = Order.objects.all()
+    ordering = ['-created']
+    def get_queryset(self):
+        queryset = super(OrderListView, self).get_queryset()
+        return queryset.filter(initiator=self.request.user)
+
+class OrderDetailView(DetailView):
+    template_name = 'orders/order.html'
+    model = Order
+    def get_context_data(self, **kwargs):
+        context = super(OrderDetailView, self).get_context_data(**kwargs)
+        context['title'] = f'Детали #{self.object.id}'
+        return context
+
+
+
 class OrderCreateView(CreateView):
     template_name = "orders/order-create.html"
     form_class = OrderForm

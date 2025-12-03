@@ -68,8 +68,11 @@ class Product(models.Model):
 
 
 class BasketQuerySet(models.QuerySet):
+    @classmethod
     def total_sum(self):
-        return sum(basket.sum() for basket in self)
+        from django.db.models.aggregates import Sum
+        return self.aggregate(total=Sum('price'))['total'] or 0
+
 
     def total_quantity(self):
         return sum(basket.quantity for basket in self)

@@ -1,6 +1,8 @@
 {% extends 'products/base.html' %}
-
+{% load humanize %}
+{% load static %}
 {% block css %}
+	<title>{{ title }}</title>
 	<link rel="stylesheet" href="{% static 'vendor/css/users.css' %}">
 	<link href="{% static 'vendor/css/profile.css' %}" rel="stylesheet">
 {% endblock %}
@@ -18,38 +20,23 @@
 							<th scope="col">#</th>
 							<th scope="col">Статус</th>
 							<th scope="col">Создан</th>
-							<th scope="col">Итого</th>
-							<th scope="col">Действие</th>
+{#							<th scope="col">Итого</th>#}
+{#							<th scope="col">Действие</th>#}
 						</tr>
 						</thead>
 						<tbody>
+						{% for order in object_list %}
 						<tr>
-							<th scope="row">1</th>
-							<td>Оплачен</td>
-							<td>21 авг. 21 года</td>
-							<td>5 070 руб.</td>
-							<td>
-								<a href="order.html">просмотреть</a>
-							</td>
+							<th scope="row">{{ order.id}}</th>
+							<td>{{ order.get_status_display }}</td>
+							<td>{{ order.created|date:"d.m.Y H:i" }}</td>
+{#							<td>{{ basket.basket_history.total_sum|default:"—" }}</td>#}
+{#							<td>#}
+{#								<a href="{% url 'orders:order_detail' order.id %}">просмотреть</a>#}
+{#							</td>#}
 						</tr>
-						<tr class="table-success">
-							<th scope="row">2</th>
-							<td>Досталвен</td>
-							<td>16 июля 21 года</td>
-							<td>4 876 руб.</td>
-							<td>
-								<a href="order.html">просмотреть</a>
-							</td>
-						</tr>
-						<tr class="table-info">
-							<th scope="row">3</th>
-							<td>В пути</td>
-							<td>14 нояб. 21 года</td>
-							<td>9 566 руб.</td>
-							<td>
-								<a href="order.html">просмотреть</a>
-							</td>
-						</tr>
+						{% endfor %}
+
 						</tbody>
 					</table>
 				</div>
