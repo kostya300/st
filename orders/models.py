@@ -2,7 +2,8 @@ from django.db import models
 
 from users.models import User
 from products.models import Basket
-
+from django.db import transaction
+from decimal import Decimal
 # Create your models here.
 
 class Order(models.Model):
@@ -30,8 +31,11 @@ class Order(models.Model):
     def __str__(self):
         return f'Заказ №{self.id} от {self.first_name} {self.last_name}' if self.id else 'Новый заказ'
 
+    @transaction.atomic
     def update_after_payment(self):
         baskets = Basket.objects.filter(user=self.initiator)
+        if not baskets.exists():
+            raise ValueError("Корзина пуста")
         self.status = self.PAID
         self.basket_history = {
             'purchased_items': [basket.de_json() for basket in baskets],

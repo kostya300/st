@@ -16,7 +16,7 @@ import logging
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseServerError
 from .models import Order
-from products.models import Basket
+from .models import Basket
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
@@ -41,16 +41,8 @@ class OrderCreateView(CreateView):
     def post(self, request, *args, **kwargs):
         super(OrderCreateView, self).post(request, *args, **kwargs)
         baskets = Basket.objects.filter(user=self.request.user)
-        line_items = []
-        for basket in baskets:
-            item = {
-                'price': basket.products_id.stripe_product_price_id,
-                'quantity': basket.quantity,
-            }
-            line_items.append(item)
-
         checkout_session = stripe.checkout.Session.create(
-            line_items=line_items,
+            line_items=baskets.stripe_products(),
             metadata = {'order_id': self.object.id},
             mode='payment',
             success_url='{}{}'.format(settings.DOMAIN_NAME, reverse('orders:order_success')),
@@ -62,9 +54,6 @@ class OrderCreateView(CreateView):
         response = super().form_valid(form)
         logger.info(f"Заказ создан пользователем {self.request.user}")
         return response
-
-
-# acct_1SXKvwBKBCHr8ZT8
 def fulfill_checkout(checkout_id):
     try:
         order = Order.objects.get(stripe_checkout_id=checkout_id)
@@ -124,10 +113,8 @@ def stripe_webhook_view(request):
 
     return HttpResponse(status=200)
 def fulfill_order(session):
-    order_id = int(session.meta.order_id)
+    order_id = int(session.metadata.order_id)
     order = Order.objects.get(id=order_id)
     order.update_after_payment()
-
-    print('order')
 
 

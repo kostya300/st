@@ -1,3 +1,4 @@
+from dis import RETURN_CONST
 from locale import currency
 from tkinter.font import names
 from django.db import models
@@ -45,10 +46,29 @@ class Product(models.Model):
             product=stripe_product['id'],unit_amount=round(self.price * 100), currency='rub',)
         return stripe_product_price
 
+
+class BasketQuerySet(models.QuerySet):
+    def total_sum(self):
+        return sum(basket.sum() for basket in self)
+
+    def total_quantity(self):
+        return sum(basket.quantity for basket in self)
+
+    def stripe_products(self):
+        line_items = []
+        for basket in self:
+            item = {
+                'price': basket.products_id.stripe_product_price_id,
+                'quantity': basket.quantity,
+            }
+            line_items.append(item)
+        return line_items
+
 class Basket(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     products_id = models.ForeignKey(Product, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField(default=1)
+    objects = BasketQuerySet.as_manager()
 
     def __str__(self):
         return f'корзина для {self.user.email} | Продукт {self.products_id.name}'
@@ -64,10 +84,4 @@ class Basket(models.Model):
             'price': float(self.products_id.price),
             'sum': float(self.sum()),
         }
-
-        #     'product_id': self.products_id.id if self.products_id else None,
-        #     'product_name': self.products_id.name if self.products_id else 'Неизвестно',
-        #     'quantity': self.quantity,
-        #     'sum': float(self.sum()) if self.sum() is not None else 0.0,
-        # }
         return basket_item
